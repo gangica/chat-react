@@ -3,12 +3,18 @@ import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
 import io from 'socket.io-client';
 
+import './Chat.css';
+import Input from '../Input/Input';
+import Messages from '../Messages/Messages';
+import Online from '../Online/Online';
+
 let socket;
 
 const Chat = ({ location }) => {
     const [name, setName] = useState('');
     const [room, setRoom] = useState('');
     const [board, setBoard] = useState([]);
+    const [users, setUsers] = useState([]);
     const [message, setMessage] = useState([]);
     const [messages, setMessages] = useState([]);
     const ENDPOINT = 'localhost:5000';
@@ -29,18 +35,22 @@ const Chat = ({ location }) => {
             socket.off();
         }
     }, [ENDPOINT, location.search]);
-
-    // Listen to the board from server
+    
+    // Listen to the message returned from server
     useEffect(() => {
         socket.on('board', (board) => {
             setBoard(board);
         })
-    }, []);
-    
-    // Listen to the message returned from server
-    useEffect(() => {
+
         socket.on('message', (message) => {
             setMessages(messages => [ ...messages, message ]);
+            //console.log('set')
+            setMessage('');
+        })
+
+        socket.on('roomData', (users) => {
+            setUsers(users);
+            console.log(users);
         })
     }, []);
 
@@ -48,19 +58,18 @@ const Chat = ({ location }) => {
     const sendMessage = () => {
         if (message) {
             socket.emit('sendMessage', message);
+            //console.log('send', message);
         }
     }
 
     return (
-        <div>
-            <h1>Chat {name}</h1>
-            <h1>Board: {board.text} </h1>
-            <h1>{messages.map(m => m.text)} </h1>
-            <input 
-            placeholder="message" 
-            type="text" 
-            onChange={event => setMessage(event.target.value)} />
-            <button type="submit" onClick={sendMessage}>Send</button>
+        <div className="outerContainer">
+            <div className="container">
+                <h1> {board.text} </h1>
+                <Messages messages={messages} name={name} />
+                <Input setMessage={setMessage} sendMessage={sendMessage} message={message} />
+            </div>
+            <Online users={users} />
         </div>
     )
 }
