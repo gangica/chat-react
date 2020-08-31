@@ -23,7 +23,6 @@
     display: flex;
     align-items: center;
     background-color: #f6f6f6;
-    height: 40px;
     padding: 10px;
 }
 
@@ -36,9 +35,15 @@
     border-radius: 20px;
 }
 
+.sidebar_searchContainer > .MuiSvgIcon-root {
+    padding: 0 !important;
+    margin: 10px;
+}
+
 .sidebar_searchContainer > input {
     border: none;
-    margin-left: 4px
+    margin-left: 4px;
+    flex: 1;
 }
 
 input:focus, textarea:focus {

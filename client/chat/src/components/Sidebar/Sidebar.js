@@ -6,12 +6,12 @@ import SidebarUser from './SidebarUser/SidebarUser';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
-const Sidebar = () => (
+const Sidebar = ({ name }) => (
   <div className="sidebar">
       <div className="sidebar_header">
           <Avatar />
           <div className="username">
-              Bryan
+              {name}
           </div>
           <IconButton>
             <AddCircleIcon />

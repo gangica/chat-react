@@ -3,10 +3,15 @@ import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
 import io from 'socket.io-client';
 
-import './Chat.css';
+import './ChatApp.css';
 import Input from '../Input/Input';
 import Messages from '../Messages/Messages';
-import Online from '../Online/Online';
+import Sidebar from '../Sidebar/Sidebar';
+
+import { Avatar, IconButton } from '@material-ui/core';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+// import Online from '../Online/Online';
 
 let socket;
 
@@ -55,7 +60,9 @@ const Chat = ({ location }) => {
     }, []);
 
     // Send input message to server
-    const sendMessage = () => {
+    const sendMessage = (e) => {
+        e.preventDefault();
+
         if (message) {
             socket.emit('sendMessage', message);
             //console.log('send', message);
@@ -63,13 +70,29 @@ const Chat = ({ location }) => {
     }
 
     return (
-        <div className="outerContainer">
-            <div className="container">
-                <h1> {board.text} </h1>
-                <Messages messages={messages} name={name} />
-                <Input setMessage={setMessage} sendMessage={sendMessage} message={message} />
+        <div className="app">
+            <div className="app_body">
+                <Sidebar name={name} />
+                <div className="chat">
+                    <div className="chat_header">
+                        <Avatar />
+                        <div className="chat_headerInfo">
+                            <h3>{room}</h3>
+                            <p>Status: {board.text}</p>
+                        </div>
+                        <IconButton>
+                            <ExitToAppIcon />
+                        </IconButton>
+                        <IconButton>
+                            <MoreVertIcon />
+                        </IconButton>
+                    </div>
+
+                    <Messages messages={messages} name={name} />
+
+                    <Input setMessage={setMessage} sendMessage={sendMessage} message={message} />
+                </div>
             </div>
-            <Online users={users} />
         </div>
     )
 }

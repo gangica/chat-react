@@ -1,20 +1,26 @@
 import React from 'react';
-
-import './Input.css';
+import { IconButton } from '@material-ui/core';
+import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
+import '../Chat/ChatApp.css';
 
 const Input = ({ setMessage, sendMessage, message }) => (
-    <div className="form">
-        <input 
-        className="input"
-        placeholder="Type a message" 
-        type="text"
-        value={message}
-        onChange={event => setMessage(event.target.value)} 
-        onKeyPress={event => event.key === 'Enter' ? sendMessage : null} />
+    <div className="chat_footer">
+        <IconButton>
+            <InsertEmoticonIcon />
+        </IconButton>
+        <form>
+            <input 
+            className="input"
+            placeholder="Type a message" 
+            type="text"
+            value={message}
+            onChange={event => setMessage(event.target.value)} 
+            onKeyPress={event => event.key === 'Enter' ? sendMessage(event) : null} />
+        </form>
         <button 
-        className="sendButton"
+        className="send"
         type="submit"
-        onClick={sendMessage}>Send</button>
+        onClick={event => sendMessage(event)}>Send</button>
     </div>
 )
 

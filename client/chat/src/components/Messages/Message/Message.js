@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Message.css';
+import '../../Chat/ChatApp.css';
 
 import ReactEmoji from 'react-emoji';
 
@@ -15,18 +15,16 @@ const Message = ({ message: { text, user }, name }) => {
 
     return (
         isCurrentUserMsg
-            ? (<div className="messageContainer justifyEnd">
-                <p className="sentText pr-10">{trimmedName}</p>
-                <div className="messageBox backgroundBlue">
-                <p className="messageText colorWhite">{ReactEmoji.emojify(text)}</p>
-                </div>
-            </div>)
-            : (<div className="messageContainer justifyStart">
-                <div className="messageBox backgroundLight">
-                <p className="messageText colorDark">{ReactEmoji.emojify(text)}</p>
-                </div>
-                <p className="sentText pl-10 ">{user}</p>
-            </div>)
+            ? (<p className="chat_message chat_sender">
+                <span className="chat_name chat_name--sender">{trimmedName}</span>
+                {ReactEmoji.emojify(text)}
+                <span className="timestamp timestamp_sender">21:17</span>
+            </p>)
+            : (<p className="chat_message">
+                <span className="chat_name">{user}</span>
+                {ReactEmoji.emojify(text)}
+                <span className="timestamp">21:17</span>
+            </p>)
     );
 }
 
