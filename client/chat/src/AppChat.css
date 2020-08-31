@@ -1,0 +1,15 @@
+.app {
+    display: grid;
+    background-color: #353535;
+    place-items: center;
+    height: 100vh;
+    font-family: 'Fira Sans';
+}
+
+.app_body {
+    display: flex;
+    background-color: #ededed;
+    height: 90vh;
+    width: 75vw;
+    box-shadow: -1px 4px 20px -6px;
+}
