@@ -13,61 +13,47 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useParams } from 'react-router-dom';
 import db from '../../firebase';
+import { useStateValue } from '../../StateProvider';
+import firebase from 'firebase';
 // import Online from '../Online/Online';
 
 let socket;
 
 const Chat = () => {
-    const [name, setName] = useState('');
+    const [{ user }, dispatch] = useStateValue();
     const [room, setRoom] = useState('');
-    const [board, setBoard] = useState([]);
     const { roomId } = useParams();
-    const [users, setUsers] = useState([]);
-    const [message, setMessage] = useState([]);
+    const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const ENDPOINT = 'localhost:5000';
 
     useEffect(() => {
         if (roomId) {
             db.collection('rooms')
             .doc(roomId)
-            .onSnapshot(snapshot => setRoom(snapshot.data().name))
+            .onSnapshot(snapshot => setRoom(snapshot.data().name));
+
+            db.collection('rooms')
+            .doc(roomId).collection('messages')
+            .orderBy('timestamp', 'asc')
+            .onSnapshot(snapshot => 
+                setMessages(snapshot.docs.map(doc => doc.data())));
         }
 
     }, [roomId])
-
-    useEffect(() => {
-        socket = io(ENDPOINT);
-
-        socket.emit('join', { name: 'admin', room: room})
-        
-        socket.on('board', (board) => {
-            setBoard(board);
-        })
-
-        socket.on('message', (message) => {
-            setMessages(messages => [ ...messages, message ]);
-            //console.log('set')
-            setMessage('');
-        })
-
-        socket.on('roomData', (users) => {
-            setUsers(users);
-        })
-
-        return () => {
-            socket.emit('disconnect');
-            socket.off();
-        }
-    }, []);
 
     // Send input message to server
     const sendMessage = (e) => {
         e.preventDefault();
 
         if (message) {
-            socket.emit('sendMessage', message);
-            //console.log('send', message);
+            db.collection('rooms').doc(roomId)
+            .collection('messages').add({
+                message: message,
+                name: user.displayName,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+
+            setMessage('');
         }
     }
 
@@ -77,7 +63,9 @@ const Chat = () => {
                 <Avatar />
                 <div className="chat_headerInfo">
                     <h3>{room}</h3>
-                    <p>Status: {board.text}</p>
+                    <p>Last seen at {" "}
+                        {new Date(messages[messages.length - 1]?.timestamp?.toDate())
+                        .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                 </div>
                 <IconButton>
                     <ExitToAppIcon />
@@ -87,7 +75,7 @@ const Chat = () => {
                 </IconButton>
             </div>
 
-            <Messages messages={messages} name={name} />
+            <Messages messages={messages} />
 
             <Input setMessage={setMessage} sendMessage={sendMessage} message={message} />
         </div>   

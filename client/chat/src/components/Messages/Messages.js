@@ -6,9 +6,9 @@ import Message from './Message/Message';
 
 import '../Chat/ChatApp.css';
 
-const Messages = ({ messages, name }) => (
+const Messages = ({ messages }) => (
   <ScrollToBottom className="chat_body">
-    {messages.map((message, i) => <div key={i}>{<Message message={message} name={name}/>}</div>)}
+    {messages.map((message, i) => <div key={i}>{<Message message={message} />}</div>)}
   </ScrollToBottom>
 );
 

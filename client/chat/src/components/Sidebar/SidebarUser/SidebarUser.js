@@ -1,19 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './SidebarUser.css';
 import { Avatar } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import db from '../../../firebase';
 
-const SidebarUser = ({ id, name }) => (
-  <Link to={`/room/${id}`}>
-    <div className="sidebarUser">
-      <Avatar />
-      <div className="sidebarUser_name">
-        <h2>{name}</h2>
-        <p>Something else...</p>
+const SidebarUser = ({ id, name }) => {
+  const [message, setMessage] = useState([]);
+
+  useEffect(() => {
+    if (id) {
+      db.collection('rooms').doc(id)
+      .collection('messages').orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => 
+        setMessage(snapshot.docs[0]?.data().message));
+    }
+  }, [id]);
+
+  return (
+    <Link to={`/room/${id}`}>
+      <div className="sidebarUser">
+        <Avatar />
+        <div className="sidebarUser_name">
+          <h2>{name}</h2>
+          <p>{message}</p>
+        </div>
       </div>
-    </div>
-  </Link>
-  
-);
+    </Link>
+
+  )
+};
 
 export default SidebarUser;
