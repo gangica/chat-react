@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import './ChatApp.css';
 import Input from '../Input/Input';
 import Messages from '../Messages/Messages';
-import Sidebar from '../Sidebar/Sidebar';
+import Join from '../Join/Join';
 
 import { Avatar, IconButton } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -22,22 +22,31 @@ let socket;
 const Chat = () => {
     const [{ user }, dispatch] = useStateValue();
     const [room, setRoom] = useState('');
+    const [join, setJoin] = useState(false);
     const { roomId } = useParams();
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        if (roomId) {
-            db.collection('rooms')
-            .doc(roomId)
-            .onSnapshot(snapshot => setRoom(snapshot.data().name));
+        db.collection('users').doc(user.uid).get()
+            .then(doc => doc.data().rooms)
+            .then(rooms => {
+                if (rooms.includes(roomId)) {
+                    db.collection('rooms')
+                        .doc(roomId)
+                        .onSnapshot(snapshot => setRoom(snapshot.data().name));
 
-            db.collection('rooms')
-            .doc(roomId).collection('messages')
-            .orderBy('timestamp', 'asc')
-            .onSnapshot(snapshot => 
-                setMessages(snapshot.docs.map(doc => doc.data())));
-        }
+                    db.collection('rooms')
+                        .doc(roomId).collection('messages')
+                        .orderBy('timestamp', 'asc')
+                        .onSnapshot(snapshot =>
+                        setMessages(snapshot.docs.map(doc => doc.data())));
+
+                    setJoin(false);    
+                } else {
+                    setJoin(true);
+                }
+            }).catch(error => console.log('Join'));
 
     }, [roomId])
 
@@ -57,7 +66,7 @@ const Chat = () => {
         }
     }
 
-    return (
+    return ( join ? (<Join />) : (
         <div className="chat">
             <div className="chat_header">
                 <Avatar />
@@ -79,7 +88,7 @@ const Chat = () => {
 
             <Input setMessage={setMessage} sendMessage={sendMessage} message={message} />
         </div>   
-    )
+    ))
 }
 
 // Chat takes the location from Join which includes name and room
