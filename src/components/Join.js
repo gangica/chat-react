@@ -28,7 +28,7 @@ const Join = ({ location }) => {
     return ( 
         <div className="chat_body join">
             <div className="room wrapper">
-                <h1>Enter room address</h1>
+                <h1>Send Join Request</h1>
                 { request ? (<button
                     className="send join_send">Request sent</button>) : (
                 <button

@@ -157,11 +157,7 @@ a {
     margin: 0 auto;
 }
 .wrapper .input-data{
-    height: 40px;
-    width: 100%;
     position: relative;
-}
-.wrapper .input-data input{
     font-family: 'Fira Sans';
     height: 100%;
     width: 60%;
@@ -171,6 +167,7 @@ a {
     text-align: center;
     color: gray
 }
+
 .input-data input:focus {
     margin: 0;
 }

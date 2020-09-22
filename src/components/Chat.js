@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Redirect, Link } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import { UserContext } from '../context/StateProvider';
 import db from '../context/firebase';
 import firebase from 'firebase';
@@ -25,7 +25,7 @@ const Chat = () => {
     const [reqModal, setReqModal] = useState(false);
     const [memModal, setMemModal] = useState(false);
     const [redirect, setRedirect] = useState(false);
-    // const [modal, setModal] = useState(false);
+    const [adminBtns, setAdminBtns] = useState(false);
     
     // Send input message to server
     const sendMessage = (e) => {
@@ -87,14 +87,17 @@ const Chat = () => {
                     setRedirect(true);
                 }
             })
-
-        /** Check room admin
-        db.collection('rooms').doc(roomId).onSnapshot(snapshot => {
-            if (snapshot.data().admin.uid == user.uid) {
-                setReqButton(true);
-            } 
-        }) */
     }, [roomId]);
+
+    useEffect(() => {
+        db.collection('rooms').doc(roomId).onSnapshot(snapshot => {
+            if (snapshot.data().admin.uid === user.uid) {
+                setAdminBtns(true);
+            } else {
+                setAdminBtns(false);
+            }
+        })
+    });
 
     return ( redirect ? (<Redirect to={{pathname: "/join", state: { room: roomId }}} />) : (
         <div className="chat">
@@ -106,12 +109,12 @@ const Chat = () => {
                         {new Date(messages[messages.length - 1]?.timestamp?.toDate())
                         .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p> 
                 </div>
-                <IconButton onClick={openReqModal}>
+                {adminBtns && <IconButton onClick={openReqModal}>
                     <GroupAddIcon />
-                </IconButton>
-                <IconButton onClick={openMemModal}>
+                </IconButton>}
+                {adminBtns && <IconButton onClick={openMemModal}>
                     <PeopleIcon />
-                </IconButton>
+                </IconButton>}
                 <IconButton>
                     <MoreVertIcon />
                 </IconButton>

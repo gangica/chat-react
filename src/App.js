@@ -8,6 +8,7 @@ import Sidebar from './components/Sidebar';
 import Login from './components/Login';
 import Join from './components/Join';
 import { UserContext } from './context/StateProvider';
+import Start from './components/Start';
 
 const App = () => {
   const [{ user }] = useContext(UserContext);
@@ -25,8 +26,11 @@ const App = () => {
               </Route>
               <Route path="/join" render={props => <Join {...props} /> }>
               </Route>
+              <Route path="/start">
+                <Start />
+              </Route>
               <Route exact path="/">
-                <Chat />
+                <Start />
               </Route>
             </Switch>
           </Router>
