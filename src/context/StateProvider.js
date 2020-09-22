@@ -1,12 +1,9 @@
-import React, { createContext, useReducer, useContext } from 'react';
+import React, { createContext, useReducer } from 'react';
 
-// Preparing Global DataLayer
-export const StateContext = createContext();
+export const UserContext = createContext();
 
 export const StateProvider = ({ reducer, initialState, children }) => (
-    <StateContext.Provider value={useReducer(reducer, initialState)}>
+    <UserContext.Provider value={useReducer(reducer, initialState)}>
         {children}
-    </StateContext.Provider>
+    </UserContext.Provider>
 );
-
-export const useStateValue = () => useContext(StateContext);

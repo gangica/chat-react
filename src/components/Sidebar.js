@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useStateValue } from '../context/StateProvider';
+import React, { useState, useEffect, useContext } from 'react';
+import { UserContext } from '../context/StateProvider';
 import firebase from 'firebase';
 import db from '../context/firebase';
 
@@ -12,7 +12,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ChatIcon from '@material-ui/icons/Chat';
 
 const Sidebar = ({ name }) => {
-  const [{ user }] = useStateValue();
+  const [{ user }] = useContext(UserContext);
   const [rooms, setRooms] = useState([]);
 
   // Create new room
@@ -69,8 +69,8 @@ const Sidebar = ({ name }) => {
         <div className="username">
           {name}
         </div>
-        <IconButton>
-          <ChatIcon onClick={createRoom} />
+        <IconButton onClick={createRoom}>
+          <ChatIcon />
         </IconButton>
         <IconButton>
           <MoreVertIcon />

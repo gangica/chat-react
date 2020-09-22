@@ -1,11 +1,11 @@
-import React from 'react';
-import { useStateValue } from '../context/StateProvider';
+import React, { useContext } from 'react';
+import { UserContext } from '../context/StateProvider';
 
 import '../css/Chat.css';
 import ReactEmoji from 'react-emoji';
 
 const Message = ({ message: { name, message, timestamp } }) => {
-    const [{ user }] = useStateValue();
+    const [{ user }] = useContext(UserContext);
 
     let isCurrentUserMsg = false;
 

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { useStateValue } from '../context/StateProvider';
+import React, { useContext } from 'react';
+import { UserContext } from '../context/StateProvider';
 import { actionTypes } from '../context/reducer';
 import db, { auth, provider } from '../context/firebase';
 import firebase from 'firebase';
@@ -7,7 +7,7 @@ import firebase from 'firebase';
 import '../css/Chat.css';
 
 const Login = () => {
-    const [{}, dispatch] = useStateValue();
+    const [{ user }, dispatch] = useContext(UserContext);
 
     const signIn = () => {
         // auth.setPersistence(auth.Auth.Persistence.SESSION);

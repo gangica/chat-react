@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -7,10 +7,10 @@ import Chat from './components/Chat';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
 import Join from './components/Join';
-import { useStateValue } from './context/StateProvider';
+import { UserContext } from './context/StateProvider';
 
 const App = () => {
-  const [{ user }, dispatch] = useStateValue();
+  const [{ user }] = useContext(UserContext);
 
   return (
     <div className="app">

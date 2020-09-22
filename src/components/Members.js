@@ -24,7 +24,7 @@ const Members = ({ room, openMemModal }) => {
                 data: doc.data()
             })))
         )
-    }, []);
+    });
 
     return (
             <div className="room wrapper sidebar_users">

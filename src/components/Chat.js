@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
-import { useStateValue } from '../context/StateProvider';
+import { UserContext } from '../context/StateProvider';
 import db from '../context/firebase';
 import firebase from 'firebase';
 
@@ -17,14 +17,13 @@ import PeopleIcon from '@material-ui/icons/People';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
 const Chat = () => {
-    const [{ user }] = useStateValue();
+    const [{ user }] = useContext(UserContext);
     const { roomId } = useParams();
     const [room, setRoom] = useState('');
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [reqModal, setReqModal] = useState(false);
     const [memModal, setMemModal] = useState(false);
-    const [reqButton, setReqButton] = useState(false);
     const [redirect, setRedirect] = useState(false);
     // const [modal, setModal] = useState(false);
     
@@ -68,9 +67,7 @@ const Chat = () => {
         })
 
         db.collection('rooms').doc(roomId).collection('members').where('uid', '==', user.uid).get()
-        .then(snapshot => snapshot.docs.map(doc => {
-            doc.ref.delete();
-        }))
+        .then(snapshot => snapshot.docs.map(doc => doc.ref.delete()))
     }
 
     useEffect(() => {
