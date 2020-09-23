@@ -7,8 +7,7 @@ import firebase from 'firebase';
 import '../css/Chat.css';
 import Input from './Input';
 import Messages from './Messages';
-import Requests from './Requests';
-import Members from './Members';
+import Modal from './Modal';
 
 import { Avatar, IconButton } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -22,10 +21,9 @@ const Chat = () => {
     const [room, setRoom] = useState('');
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const [reqModal, setReqModal] = useState(false);
-    const [memModal, setMemModal] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [adminBtns, setAdminBtns] = useState(false);
+    const [modal, setModal] = useState(false);
     
     // Send input message to server
     const sendMessage = (e) => {
@@ -43,24 +41,6 @@ const Chat = () => {
         }
     }
 
-    const openReqModal = () => {   
-        if (!reqModal) {
-            setReqModal(true);
-            setMemModal(false);
-        } else {
-            setReqModal(false);
-        }
-    }
-
-    const openMemModal = () => {   
-        if (!memModal) {
-            setMemModal(true);
-            setReqModal(false);
-        } else {
-            setMemModal(false);
-        }
-    }
-
     const leaveRoom = () => {
         db.collection('users').doc(user.uid).update({
             rooms: firebase.firestore.FieldValue.arrayRemove(roomId)
@@ -71,6 +51,7 @@ const Chat = () => {
     }
 
     useEffect(() => {
+        setModal(false);
         db.collection('users').doc(user.uid)
             .onSnapshot(snapshot => {
                 if (snapshot.data().rooms.includes(roomId)) {
@@ -97,7 +78,7 @@ const Chat = () => {
                 setAdminBtns(false);
             }
         })
-    });
+    }, [roomId]);
 
     return ( redirect ? (<Redirect to={{pathname: "/join", state: { room: roomId }}} />) : (
         <div className="chat">
@@ -109,10 +90,10 @@ const Chat = () => {
                         {new Date(messages[messages.length - 1]?.timestamp?.toDate())
                         .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p> 
                 </div>
-                {adminBtns && <IconButton onClick={openReqModal}>
+                {adminBtns && <IconButton onClick={() => setModal("Requests")}>
                     <GroupAddIcon />
                 </IconButton>}
-                {adminBtns && <IconButton onClick={openMemModal}>
+                {adminBtns && <IconButton onClick={() => setModal("Members")}>
                     <PeopleIcon />
                 </IconButton>}
                 <IconButton>
@@ -123,11 +104,9 @@ const Chat = () => {
                 </IconButton>
             </div>
             <div className="chat_body">
-                <div className="modal">
-                    {memModal && (<Members room={roomId} openMemModal={openMemModal} />)}
-                    {reqModal && (<Requests room={roomId} openReqModal={openReqModal} />)}
-                </div>
-                {!memModal && !reqModal && <Messages messages={messages} />}
+                {modal ? (<Modal room={roomId} modal={modal} setModal={setModal} />) : (
+                    <Messages messages={messages} />
+                )}
             </div>
             <Input setMessage={setMessage} sendMessage={sendMessage} message={message} />
         </div>   
