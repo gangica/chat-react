@@ -1,116 +1,36 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Redirect } from 'react-router-dom';
-import { UserContext } from '../context/StateProvider';
-import db from '../context/firebase';
-import firebase from 'firebase';
-
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { getRoomMessages, getRoomById } from '../context/apicalls';
 import '../css/Chat.css';
 import Input from './Input';
 import Messages from './Messages';
-import Modal from './Modal';
+import ChatHeader from './ChatHeader';
+import Setting from './Setting';
 
-import { Avatar, IconButton } from '@material-ui/core';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import PeopleIcon from '@material-ui/icons/People';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
-
-const Chat = () => {
-    const [{ user }] = useContext(UserContext);
-    const { roomId } = useParams();
-    const [room, setRoom] = useState('');
-    const [message, setMessage] = useState('');
+const Chat = ({ location }) => {
+    const { id: roomId } = location.state;
+    const [room, setRoom] = useState();
     const [messages, setMessages] = useState([]);
-    const [redirect, setRedirect] = useState(false);
-    const [adminBtns, setAdminBtns] = useState(false);
-    const [modal, setModal] = useState(false);
-    
-    // Send input message to server
-    const sendMessage = (e) => {
-        e.preventDefault();
-
-        if (message) {
-            db.collection('rooms').doc(roomId)
-            .collection('messages').add({
-                message: message,
-                name: user.displayName,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-
-            setMessage('');
-        }
-    }
-
-    const leaveRoom = () => {
-        db.collection('users').doc(user.uid).update({
-            rooms: firebase.firestore.FieldValue.arrayRemove(roomId)
-        })
-
-        db.collection('rooms').doc(roomId).collection('members').where('uid', '==', user.uid).get()
-        .then(snapshot => snapshot.docs.map(doc => doc.ref.delete()))
-    }
+    const [setting, setSetting] = useState(true);
 
     useEffect(() => {
-        setModal(false);
-        db.collection('users').doc(user.uid)
-            .onSnapshot(snapshot => {
-                if (snapshot.data().rooms.includes(roomId)) {
-                    db.collection('rooms')
-                        .doc(roomId)
-                        .onSnapshot(snapshot => setRoom(snapshot.data().name));
+        // Get room details
+        getRoomById(roomId, setRoom);
+        getRoomMessages(roomId, setMessages);
+    }, [roomId])
 
-                    db.collection('rooms')
-                        .doc(roomId).collection('messages')
-                        .orderBy('timestamp', 'asc')
-                        .onSnapshot(snapshot =>
-                            setMessages(snapshot.docs.map(doc => doc.data())));
-                } else {
-                    setRedirect(true);
-                }
-            })
-    }, [roomId]);
-
-    useEffect(() => {
-        db.collection('rooms').doc(roomId).onSnapshot(snapshot => {
-            if (snapshot.data().admin.uid === user.uid) {
-                setAdminBtns(true);
-            } else {
-                setAdminBtns(false);
-            }
-        })
-    }, [roomId]);
-
-    return ( redirect ? (<Redirect to={{pathname: "/join", state: { room: roomId }}} />) : (
-        <div className="chat">
-            <div className="chat_header">
-                <Avatar />
-                <div className="chat_headerInfo">
-                    <h3>{room}</h3>
-                    <p>Last seen at {" "}
-                        {new Date(messages[messages.length - 1]?.timestamp?.toDate())
-                        .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p> 
+    return (
+        <div className="chat__container">
+            <div className="chat">
+                {room && <ChatHeader name={room.data.name} roomPhoto={room.data.photo} setting={setting} setSetting={setSetting} />}
+                <div className="chat_body">
+                    {room && <Messages messages={messages} />}
                 </div>
-                {adminBtns && <IconButton onClick={() => setModal("Requests")}>
-                    <GroupAddIcon />
-                </IconButton>}
-                {adminBtns && <IconButton onClick={() => setModal("Members")}>
-                    <PeopleIcon />
-                </IconButton>}
-                <IconButton>
-                    <MoreVertIcon />
-                </IconButton>
-                <IconButton onClick={leaveRoom}>
-                    <ExitToAppIcon />
-                </IconButton>
+                <Input room={roomId} />
             </div>
-            <div className="chat_body">
-                {modal ? (<Modal room={roomId} modal={modal} setModal={setModal} />) : (
-                    <Messages messages={messages} />
-                )}
-            </div>
-            <Input setMessage={setMessage} sendMessage={sendMessage} message={message} />
-        </div>   
-    ))
+            {(setting && room) && <Setting roomId={roomId} roomName={room.data.name} roomPhoto={room.data.photo} />}
+        </div>
+    )
 }
 
 export default Chat;

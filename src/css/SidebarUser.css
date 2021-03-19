@@ -1,29 +1,41 @@
 .sidebarUser {
     display: flex;
-    padding: 20px;
+    padding: 15px 15px;
     cursor: pointer;
-    border-bottom: 1px solid #f6f6f6;
+    border-radius: 10px;
 }
 
 .sidebarUser:hover {
-    background-color: #ebebeb;
+    background-color: #ecf0f4;
 }
 
 .sidebarUser_name > h2 {
-    font-size: 18px;
-    margin-bottom: 8px;
+    font-size: 14px;
     margin: 0;
+    letter-spacing: -0.01em;
 }
 
-.sidebarUser_name > p {
-    font-size: 12px;
-    margin-top: 8px;
-    margin-bottom: 0;
-    color: gray;
+.sidebarUser_name > p:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebarUser_name p {
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin: 5px 0 0 0;
+    color: #adacac;
 }
 
 .sidebarUser_name {
     margin-left: 16px;
     flex: 1;
     text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.last__message {
+    display:flex;
+    justify-content: space-between;
 }

@@ -1,36 +1,46 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../context/StateProvider';
 
 import '../css/Chat.css';
+import { Avatar } from '@material-ui/core';
 import ReactEmoji from 'react-emoji';
+import { getUser } from '../context/apicalls';
 
-const Message = ({ message: { name, message, timestamp } }) => {
+const Message = ({ message: { name, type, message, timestamp }, isFirst, isLast }) => {
     const [{ user }] = useContext(UserContext);
+    const [userSent, setUserSent] = useState();
+    const [renderMessage, setRenderMessage] = useState();
 
-    let isCurrentUserMsg = false;
-
-    if (name === user.displayName) {
-        isCurrentUserMsg = true;
+    const getUserSent = async () => {
+        let userSent = await getUser(name);
+        setUserSent(userSent)
     }
 
+    let isCurrentUserMessage = name === user.uid;
+
+    useEffect(() => {
+        getUserSent();
+        if (type === "text") {
+            setRenderMessage(message)
+        } else if (type === "image") {
+            setRenderMessage(<img src={message} style={{ minHeight: 200, width: 200 }} />)
+        } else {
+            setRenderMessage(message)
+        }
+    }, [])
+    
     return (
-        isCurrentUserMsg
-            ? (<p className="chat_message chat_sender">
-                <span className="chat_name chat_name--sender">{name}</span>
-                {ReactEmoji.emojify(message)}
-                <span className="timestamp timestamp_sender">
-                    {new Date(timestamp?.toDate())
-                    .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                </span>
-            </p>)
-            : (<p className="chat_message">
-                <span className="chat_name">{name}</span>
-                {ReactEmoji.emojify(message)}
-                <span className="timestamp">
-                    {new Date(timestamp?.toDate())
-                    .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                </span>
-            </p>)
+        isCurrentUserMessage
+            ? (<li className="chat_message chat_sender">
+                {renderMessage}
+            </li>)
+            : (<div className="other__message">
+                {(isLast && userSent) && <div className="chat__head"><Avatar src={userSent.photoURL} /></div>}
+                {(isFirst && userSent) && <span className="chat_name">{userSent.name}</span>}
+                <li className="chat_message">
+                    {renderMessage}
+                </li>
+            </div>)
     );
 }
 

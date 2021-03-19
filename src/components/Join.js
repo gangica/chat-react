@@ -1,43 +1,50 @@
-// Check Room View
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { UserContext } from '../context/StateProvider';
+import { Redirect } from 'react-router-dom';
 import db from '../context/firebase';
+import firebase from 'firebase';
+import { isAbleToJoin, joinRoom } from '../context/apicalls';
 
-const Join = ({ location }) => {
+const Join = () => {
     const [{ user }] = useContext(UserContext);
-    const [request, setRequest] = useState(false);
+    const [roomId, setRoomId] = useState('');
+    const [redirect, setRedirect] = useState(false);
     
-    useEffect(() => {
-        // Check if user has sent request. If yes, setRquest true
-        if (location.state.room) {
-            db.collection('rooms').doc(location.state.room).collection('requests')
-                .onSnapshot(snapshot => snapshot.docs.map(doc => doc.data().uid === user.uid && setRequest(true)))
-        }
-    });
+    const join = async (e) => {
+        e.preventDefault();
 
-    const joinRoom = () => {
-        if (location.state.room) {
-            db.collection('rooms').doc(location.state.room).collection('requests').add({
-                name: user.displayName,
-                uid: user.uid
-            })
-            setRequest(true);
+        if (roomId) {
+            let res = await isAbleToJoin(roomId, user);
+            if (res === true) {
+                await joinRoom(roomId, user);
+                setRedirect(true)
+            } else {
+                console.log(res)
+            }
         }
     }
 
-    return ( 
+    return (!redirect ? (
         <div className="chat_body join">
             <div className="room wrapper">
-                <h1>Send Join Request</h1>
-                { request ? (<button
-                    className="send join_send">Request sent</button>) : (
+                <h2>Join Room</h2>
+                <div className="sidebar_search">
+                    <div className="sidebar_searchContainer">
+                        <input
+                            className="input-data"
+                            placeholder="Enter room ID..."
+                            type="text"
+                            onChange={e => setRoomId(e.target.value)} />
+                    </div>
+                </div>
+                
                 <button
-                    className="send"
+                    className="medium__btn"
                     type="submit"
-                    onClick={joinRoom}>Join</button>)}
+                    onClick={e => join(e)}>Join</button>
             </div>
         </div>
-    )
+    ) : (<Redirect to={{ pathname: '/room', state: { id: roomId }}} />))
 }
 
 export default Join;

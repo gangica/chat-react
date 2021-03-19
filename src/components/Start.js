@@ -3,6 +3,7 @@ import { UserContext } from '../context/StateProvider';
 import { Redirect } from 'react-router-dom';
 import db from '../context/firebase';
 import firebase from 'firebase';
+import { createRoom } from '../context/apicalls';
 
 const Start = () => {
     const [{ user }] = useContext(UserContext);
@@ -10,43 +11,36 @@ const Start = () => {
     const [roomId, setRoomId] = useState('');
     const [redirect, setRedirect] = useState(false);
     
-    const createRoom = () => {
+    const create = async (e) => {
+        e.preventDefault()
         if (roomName) {
-            db.collection('rooms').add({
-                name: roomName,
-                admin: {
-                    name: user.displayName,
-                    uid: user.uid
-                }
-            }).then(room => {
-                setRoomId(room.id);
-                db.collection('rooms').doc(room.id).collection('members').add({
-                    name: user.displayName,
-                    uid: user.uid
-                })
-                db.collection('users').doc(user.uid).update({
-                    rooms: firebase.firestore.FieldValue.arrayUnion(room.id)
-                })
-                
-            })
-            .catch(error => console.log('no'));
-
+            let roomId = await createRoom(roomName, user);
+            setRoomId(roomId);
             setRedirect(true);
         }
     }
 
-    return ( redirect ? (<Redirect to={`/room/${roomId}`} />) : (
+    return (!redirect ? (
         <div className="chat_body join">
             <div className="room wrapper">
-                <h1>Enter a room name</h1>
-                <input className="input-data" placeholder="Type a message" type="text" onChange={e => setRoomName(e.target.value)}></input>
+                <h2>Create New Room</h2>
+                <div className="sidebar_search">
+                    <div className="sidebar_searchContainer">
+                        <input
+                            className="input-data"
+                            placeholder="Name your room..."
+                            type="text"
+                            onChange={e => setRoomName(e.target.value)} />
+                    </div>
+                </div>
+                
                 <button
-                    className="send"
+                    className="medium__btn"
                     type="submit"
-                    onClick={createRoom}>Start</button>
+                    onClick={e => create(e)}>Create</button>
             </div>
         </div>
-    ))
+    ) : (<Redirect to={{ pathname: '/room', state: { id: roomId }}} />))
 }
 
 export default Start;

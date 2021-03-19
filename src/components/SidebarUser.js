@@ -4,26 +4,37 @@ import db from '../context/firebase';
 
 import '../css/SidebarUser.css';
 import { Avatar } from '@material-ui/core';
+import { getLatestMessage } from '../context/apicalls';
 
-const SidebarUser = ({ id, name }) => {
+const SidebarUser = ({ id, name, photo }) => {
   const [message, setMessage] = useState([]);
+  const [action, setAction] = useState();
 
   useEffect(() => {
-    if (id) {
-      db.collection('rooms').doc(id)
-      .collection('messages').orderBy('timestamp', 'desc')
-      .onSnapshot(snapshot => 
-        setMessage(snapshot.docs[0]?.data().message));
+    getLatestMessage(id, setMessage);
+  }, [])
+
+  useEffect(() => {
+    if (message) {
+      if (message.type === "image") {
+        setAction(`${message.name} sent a photo`)
+      }
+    } else {
+      setAction(`Welcome to ${name}`)
     }
-  }, [id]);
+  }, [message])
 
   return (
-    <Link to={`/room/${id}`}>
+    <Link to={{ pathname: '/room', state: { id: id }}}>
       <div className="sidebarUser">
-        <Avatar />
+        <Avatar src={photo && photo} />
         <div className="sidebarUser_name">
           <h2>{name}</h2>
-          <p>{message}</p>
+          <div className="last__message">
+            <p>{action ? action : (message && message.message)}</p>
+            <p>{message && new Date(message.timestamp?.toDate())
+            .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false})}</p>
+          </div>
         </div>
       </div>
     </Link>

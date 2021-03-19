@@ -1,17 +1,20 @@
 export const initialState = {
-    user: null
-}
-
-export const actionTypes = {
-    SET_USER: 'SET_USER'
+    user: null,
+    rooms: [],
 }
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case actionTypes.SET_USER:
+        case 'SET_USER':
             return {
                 ...state,
-                user: action.user
+                user: action.payload
+            };
+
+        case 'SET_ROOMS':
+            return {
+                ...state,
+                rooms: [action.payload, ...state.rooms]
             };
         
         default:

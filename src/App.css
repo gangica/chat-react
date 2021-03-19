@@ -1,3 +1,38 @@
+@font-face {
+  font-family: 'Glacial-Regular';
+  src: url('./fonts/AvenirNextLTPro-Regular.otf');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Glacial-Medium';
+  src: url('./fonts/AvenirNextLTPro-Medium.otf');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Glacial-Demi';
+  src: url('./fonts/AvenirNextLTPro-Demi.otf');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Glacial-Bold';
+  src: url('./fonts/AvenirNextLTPro-Bold.otf');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Glacial-Heavy';
+  src: url('./fonts/AvenirNextLTPro-Heavy.otf');
+  font-weight: 900;
+  font-style: normal;
+}
+
 .App {
   text-align: center;
 }
@@ -7,10 +42,85 @@
   pointer-events: none;
 }
 
+body {
+  margin: 0;
+  font-family: 'Glacial-Regular';
+}
+
+input {
+  font-family: inherit;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  margin-left: 15px;
+  
+}
+
+h4, h5 {
+  margin: 0
+}
+
+input::placeholder {
+  color: #adacac;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+a {
+  text-decoration: none !important;
+  margin: 0
+}
+
+.btn {
+  display: inline-block;
+  color: #282c34;
+  font-weight: 700;
+  font-size: 12px;
+  border: 2px solid #282c34;
+  border-radius: 10px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.3, 0, 0.4, 1) 0s;
+  text-align: center;
+  white-space: nowrap;
+  font-family: inherit;
+  background: transparent;
+}
+
+.btn:hover {
+  color: white;
+  background: #018342;
+  border: 2px solid #018342;
+  outline: none;
+}
+
+.medium__btn {
+  display: inline-block;
+  color: white;
+  background: #018342;
+  border: 2px solid #018342;
+  outline: none;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 10px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.3, 0, 0.4, 1) 0s;
+  text-align: center;
+  white-space: nowrap;
+  font-family: inherit;
+  margin: 10px
+}
+
+.medium__btn:hover {
+  color: #282c34;
+  background: transparent;
+  border: 2px solid #282c34;
+  outline: none;
 }
 
 .App-header {
@@ -27,6 +137,12 @@
 .App-link {
   color: #61dafb;
 }
+
+.members .MuiAvatar-root, .sidebarUser .MuiAvatar-root, .chat_header .MuiAvatar-root {
+  width: 30px;
+  height: 30px;
+}
+
 
 @keyframes App-logo-spin {
   from {

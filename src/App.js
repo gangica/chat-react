@@ -1,45 +1,35 @@
-import React, { useContext } from 'react';
-
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-
-// import Login from './components/Join/Login';
-import Chat from './components/Chat';
-import Sidebar from './components/Sidebar';
+import React, { useContext, useEffect, useState } from 'react';
 import Login from './components/Login';
-import Join from './components/Join';
+import Main from './components/Main';
 import { UserContext } from './context/StateProvider';
-import Start from './components/Start';
+import { auth } from './context/firebase';
+import "./App.css";
 
 const App = () => {
-  const [{ user }] = useContext(UserContext);
+  const [{ user }, dispatch] = useContext(UserContext);
+  const [isLoggedIn, setIsLoggedIn] = useState();
+
+  useEffect(() => {
+      auth.onAuthStateChanged(currentUser => {
+        if (currentUser) {
+          dispatch({
+            type: 'SET_USER',
+            payload: currentUser
+          })
+          setIsLoggedIn(true)
+        } else {
+          setIsLoggedIn(false)
+        }
+      })
+  }, [])
 
   return (
     <div className="app">
       <div className="app_body">
-      {user
-        ? (
-          <Router>
-            <Sidebar name={user.displayName}/>
-            <Switch>
-              <Route path="/room/:roomId">
-                <Chat />
-              </Route>
-              <Route path="/join" render={props => <Join {...props} /> }>
-              </Route>
-              <Route path="/start">
-                <Start />
-              </Route>
-              <Route exact path="/">
-                <Start />
-              </Route>
-            </Switch>
-          </Router>
-        )
-        : (<Login />)}
-        </div>
+          {isLoggedIn ? <Main /> : <Login />}
       </div>
-)};
+    </div>
+  )
+};
 
 export default App;
-
-//  <Route path="/" exact component={Join} />

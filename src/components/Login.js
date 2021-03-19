@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../context/StateProvider';
-import { actionTypes } from '../context/reducer';
 import db, { auth, provider } from '../context/firebase';
 import firebase from 'firebase';
 
@@ -10,7 +9,6 @@ const Login = () => {
     const [{ user }, dispatch] = useContext(UserContext);
 
     const signIn = () => {
-        // auth.setPersistence(auth.Auth.Persistence.SESSION);
         auth.signInWithPopup(provider)
         .then(result => {
             let userDoc = db.collection('users').doc(result.user.uid);
@@ -23,6 +21,7 @@ const Login = () => {
                 } else {
                     userDoc.set({
                         name: result.user.displayName,
+                        photoURL: result.user.photoURL,
                         rooms: [],
                         lastLoginTime: firebase.firestore.FieldValue.serverTimestamp()                    
                     })
@@ -30,13 +29,10 @@ const Login = () => {
             });
             
             dispatch({
-                type: actionTypes.SET_USER,
-                user: result.user
+                type: 'SET_USER',
+                payload: result.user
             });
         })
-        .catch(error => console.log('no'));
-        
-        
     };
     
     return (

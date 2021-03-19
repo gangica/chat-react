@@ -1,85 +1,107 @@
 .app {
     display: grid;
-    background-color: #353535;
+    background-color: #ecf0f4;
     place-items: center;
     height: 100vh;
-    font-family: 'Fira Sans';
 }
 
 .app_body {
     display: flex;
-    background-color: #ededed;
+    background-color: white;
     height: 90vh;
     width: 75vw;
-    box-shadow: -1px 4px 20px -6px;
+    box-shadow: -1px 4px 50px -40px;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 a {
     text-decoration: none !important;
     color: black;
 }
+
+p, .description {
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin: 5px 0 0 0;
+    color: #adacac;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
 /* */
+.chat__container {
+    display: flex;
+    width: 100%
+}
 
 .chat {
-    flex: 1;
+    width: 100%;
     display: flex;
     flex-direction: column;
+    background: #ecf0f4;
+    border-radius: 10px;
+    margin: 10px;
 }
 
 .chat_header {
-    padding: 20px;
+    padding: 5px 20px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid lightgray;
 }
 
-.chat_headerInfo > h3 {
-    margin: 4px 0 4px 0;
+.chat_headerInfo > h4 {
+    margin: 5px 0;
 }
 
 .chat_headerInfo > p {
     font-size: 12px;
-    margin: 4px 0 4px 0;
+    margin: 5px 0;
     color: gray;
 }
 
 .chat_headerInfo {
     flex: 1;
-    padding-left: 20px;
+    padding-left: 14px;
     align-items: center;
 }
 
 .chat_body {
-    background-image: url('https://images.unsplash.com/photo-1487700160041-babef9c3cb55?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1470&q=80');
-    background-position: center;
     flex: 1;
-    padding: 30px;
-    overflow-y: none;
+    padding: 20px;
+    overflow-y: auto;
 }
 
 .chat_message {
     position: relative;
-    font-size: 16px;
+    font-size: 12px;
     padding: 10px;
     width: fit-content;
-    border-radius: 10px;
     background-color: white;
-    margin-bottom: 30px;
-    margin-top: 30px;
+    border-radius: 10px 10px 10px 0px;
+    margin: 5px 0 0 30px;
+    font-weight: 600;
+    max-width: 200px;
 }
 
 .chat_sender {
     margin-left: auto;
-    background-color: #17803a;
+    background-color: #018342;
     color: white;
+    border-radius: 10px 10px 0 10px !important
 }
 
 .chat_name {
-    position: absolute;
-    top: -20px;
-    font-size: small;
+    position: sticky;
+    top: -1rem;
+    left: 2.2rem;
+    font-size: x-small;
     font-weight: 800;
-    color: rgb(39, 39, 39)
+    color: rgb(39, 39, 39);
 }
 
 .chat_name--sender {
@@ -98,26 +120,21 @@ a {
 
 .chat_footer {
     display: flex;
-    align-items: center;
-    background-color: #f6f6f6;
-    padding: 10px;
+    flex-direction: column;
 }
 
-.chat_footer > form {
+.chat_footer form {
     display: flex;
     align-items: center;
     background-color: white;
     width: 100%;
     height: 35px;
     border-radius: 20px;
-    margin: 0 12px 0 12px; 
 }
 
-.chat_footer > form > input, input:focus {
-    border: none;
-    margin-left: 16px;
-    flex: 1;
-}
+.chat_footer .MuiSvgIcon-root {
+    font-size: 20px
+} 
 
 .send {
     border-radius: 20px;
@@ -126,16 +143,19 @@ a {
     color: white;
     padding: 10px 25px 10px 25px;
     outline: none;
-    font-family: Fira Sans;
+    font-family: inherit;
 }
 
 .send:hover {
     cursor: pointer
 }
 
-.join {
+.join {    
     display: grid;
     place-items: center;
+    background: #ecf0f4;
+    border-radius: 10px;
+    margin: 10px;
 }
 
 .join_send {
@@ -148,28 +168,13 @@ a {
 }
 
 /* Float Input */
-.wrapper{
-    width: 450px;
+.wrapper {
     background: #fff;
-    padding: 30px;
+    padding: 25px;
     box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
     border-radius: 20px;
     margin: 0 auto;
-}
-.wrapper .input-data{
-    position: relative;
-    font-family: 'Fira Sans';
-    height: 100%;
     width: 60%;
-    border: none;
-    font-size: 17px;
-    border-bottom: 2px solid silver;
-    text-align: center;
-    color: gray
-}
-
-.input-data input:focus {
-    margin: 0;
 }
 
 .login {
@@ -191,4 +196,116 @@ a {
 .main {
     display: grid;
     place-items: start end
+}
+
+.profile__pic {
+    text-align: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile__pic .MuiAvatar-root {
+    width: 80px;
+    height: 80px;
+    margin: 20px 0 15px 0;
+}
+
+.setting__section {
+    margin: 10px 0;
+    overflow-y: auto
+}
+
+.members__info {
+    padding: 5px 0;
+    display: flex;
+    cursor: pointer;
+}
+
+.members__info .MuiAvatar-root {
+    height: 30px;
+    width: 30px
+}
+
+.members__info h4 {
+    margin: 0;
+    font-size: smaller;
+    align-self: center;
+    margin-left: 16px;
+    text-align: left;
+}
+
+.other__message {
+    position: relative
+}
+
+.other__message .MuiAvatar-root {
+    height: 20px;
+    width: 20px;
+    margin-right: 10px
+}
+
+.chat__head {
+    position: absolute;
+    bottom: 0rem;
+}
+
+#upload, #uploadMessage {
+    opacity: 0;
+    position: absolute;
+    z-index: -1; 
+}
+
+.photo__container, .preview__container {
+    position: relative
+}
+
+label {
+    cursor: pointer
+}
+
+.upload__container {
+    margin-bottom: 20px
+}
+
+#upload__btn {
+    position: absolute;
+    top: 75px;
+    right: 0px;
+}
+
+.preview__img {
+    height: 80px;
+}
+
+.preview {
+    padding: 10px
+}
+
+.input__container {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.delete {
+    position: absolute;
+    top: -8px;
+    left: -9px;
+    cursor: pointer;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 5px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.grid img {
+    height: 60px;
+    width: 60px;
 }
