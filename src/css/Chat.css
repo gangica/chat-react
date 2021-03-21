@@ -9,7 +9,7 @@
     display: flex;
     background-color: white;
     height: 90vh;
-    width: 75vw;
+    min-width: 75vw;
     box-shadow: -1px 4px 50px -40px;
     border-radius: 10px;
     padding: 10px;
@@ -212,8 +212,7 @@ ul {
 }
 
 .setting__section {
-    margin: 10px 0;
-    overflow-y: auto
+    margin: 20px 0;
 }
 
 .members__info {
@@ -299,13 +298,32 @@ label {
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    grid-template-columns: repeat(3, minmax(80px, 1fr));
     gap: 5px;
-    width: 100%;
+    justify-items: center;
     margin-top: 10px;
 }
 
 .grid img {
-    height: 60px;
-    width: 60px;
+    vertical-align: middle;
+    height: 80px;
+    width: 80px;
+    min-width: 80px;
+    object-fit: cover;
+}
+
+.alert {
+    color: red;
+    margin: 10px
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.tab__content {
+    margin: 20px 0;
+    overflow-y: auto;
 }

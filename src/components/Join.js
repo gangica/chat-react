@@ -1,14 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../context/StateProvider';
 import { Redirect } from 'react-router-dom';
-import db from '../context/firebase';
-import firebase from 'firebase';
 import { isAbleToJoin, joinRoom } from '../context/apicalls';
 
 const Join = () => {
     const [{ user }] = useContext(UserContext);
-    const [roomId, setRoomId] = useState('');
+    const [roomId, setRoomId] = useState();
     const [redirect, setRedirect] = useState(false);
+    const [alert, setAlert] = useState();
     
     const join = async (e) => {
         e.preventDefault();
@@ -19,7 +18,7 @@ const Join = () => {
                 await joinRoom(roomId, user);
                 setRedirect(true)
             } else {
-                console.log(res)
+                setAlert(res)
             }
         }
     }
@@ -37,7 +36,7 @@ const Join = () => {
                             onChange={e => setRoomId(e.target.value)} />
                     </div>
                 </div>
-                
+                {alert && <div className="description alert">{alert}</div>}
                 <button
                     className="medium__btn"
                     type="submit"

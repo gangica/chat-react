@@ -2,13 +2,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import { downloadPhotos, getRoomMembers, leaveRoom, updateRoomPhoto, uploadPhotoToDb } from '../context/apicalls';
 import { Redirect } from 'react-router-dom';
 import '../css/Chat.css';
-import { Avatar } from '@material-ui/core';
+import { Avatar, IconButton } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import { UserContext } from '../context/StateProvider';
+import RoomDetail from './RoomDetail';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-const Setting = ({ roomId, roomName, roomPhoto }) => {
-    const [{ user }] = useContext(UserContext)
+const Setting = () => {
+    const [{ user, currentRoom }] = useContext(UserContext);
+    const { id: roomId, name: roomName, photo: roomPhoto } = currentRoom;
+
     const [members, setMembers] = useState();
     const [redirect, setRedirect] = useState(false);
     const [photo, setPhoto] = useState();
@@ -32,26 +36,23 @@ const Setting = ({ roomId, roomName, roomPhoto }) => {
     const submitPhoto = async (e) => {
         e.preventDefault();
         if (photo) {
-            await updateRoomPhoto(roomId, photo.file)
+            await updateRoomPhoto(roomId, photo.file);
         }        
     }
 
     const getMedia = async () => {
         let media = await downloadPhotos(roomId);
-        console.log(media)
         setMedia(media)
     }
 
     const leave = async () => {
-        let res = await leaveRoom(roomId, user);
-        if (res === true) {
-            setRedirect(true)
-        }
+        setRedirect(true)
+        await leaveRoom(roomId, user);
     }
 
     useEffect(() => {
-        getRoomMembers(roomId, setMembers);
-        getMedia();
+        // getRoomMembers(roomId, setMembers);
+        // getMedia();
     }, [roomId])
 
     return (!redirect ? (
@@ -59,6 +60,9 @@ const Setting = ({ roomId, roomName, roomPhoto }) => {
             <div className="setting__header">
                 <InfoIcon />
                 <h4>Room Info</h4>
+                <IconButton onClick={leave}>
+                    <ExitToAppIcon />
+                </IconButton>
             </div>
             <div className="profile__pic">
                 <div className="photo__container">
@@ -75,19 +79,8 @@ const Setting = ({ roomId, roomName, roomPhoto }) => {
                 <h4 className="username">{roomName}</h4>
                 <p>Room ID: {roomId}</p>
             </div>
-            <div className="setting__section">
-                <div className="conversation_header"><h4>Members</h4></div>
-                {members && members.map(member => (
-                <div key={member.id} className="members__info">
-                    <Avatar src={member.data.photoURL} alt="avatar" />
-                    <h4>{member.data.name}</h4>
-                </div>))}
-            </div>
-            <div className="setting__section">
-                <h4>Media</h4>
-                <div className="grid">{media && media.map((url, i) => <img src={url} />)}</div>
-            </div>
-            <button className="send" onClick={leave}>Leave</button>
+            {(members && media) && <RoomDetail members={members} media={media} />}
+            {/* <button className="btn" onClick={leave}>Leave</button> */}
         </div>
     ) : (<Redirect to='/start' />))
 }

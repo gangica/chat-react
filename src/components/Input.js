@@ -30,16 +30,19 @@ const Input = ({ room }) => {
 
     const sendMessage = async (e) => {
         e.preventDefault();
+
+        // Photo message
         if (photo) {
             let photoUrl = await uploadPhotoToDb(room, photo.file);
             postMessages(photoUrl, "image", room, user);
+            setPhoto(null);
         }    
-        // Add message to db
+
+        // Text message
         if (message) {
             postMessages(message, "text", room, user);
+            setMessage('');
         }
-        setMessage('');
-        setPhoto(null);
     }
     
     return (
@@ -65,12 +68,14 @@ const Input = ({ room }) => {
                     <SendIcon />
                 </IconButton>
             </div>
-            {photo && <div className="input__container preview">
-                <div className="preview__container">
-                    <img src={photo.previewUrl} alt="preview" className="preview__img" />
-                    <span className="delete" onClick={() => setPhoto(null)}><AddCircleIcon /></span>
+            {photo && (
+                <div className="input__container preview">
+                    <div className="preview__container">
+                        <img src={photo.previewUrl} alt="preview" className="preview__img" />
+                        <span className="delete" onClick={() => setPhoto(null)}><AddCircleIcon /></span>
+                    </div>
                 </div>
-            </div>}
+            )}
         </div>
     )
 }

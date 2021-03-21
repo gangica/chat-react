@@ -6,39 +6,32 @@ import { Avatar } from '@material-ui/core';
 import ReactEmoji from 'react-emoji';
 import { getUser } from '../context/apicalls';
 
-const Message = ({ message: { name, type, message, timestamp }, isFirst, isLast }) => {
+const Message = ({ message, isFirst, isLast }) => {
+    const { content, type, author, timestamp } = message;
     const [{ user }] = useContext(UserContext);
-    const [userSent, setUserSent] = useState();
-    const [renderMessage, setRenderMessage] = useState();
 
-    const getUserSent = async () => {
-        let userSent = await getUser(name);
-        setUserSent(userSent)
-    }
+    let isCurrentUserMessage = author.id === user.uid;
 
-    let isCurrentUserMessage = name === user.uid;
-
-    useEffect(() => {
-        getUserSent();
-        if (type === "text") {
-            setRenderMessage(message)
-        } else if (type === "image") {
-            setRenderMessage(<img src={message} style={{ minHeight: 200, width: 200 }} />)
-        } else {
-            setRenderMessage(message)
+    const renderMessage = () => {
+        switch (type) {
+            case 'image':
+                return <img src={content} style={{ width: 200 }} />
+            
+            default:
+                return content
         }
-    }, [])
+    }
     
     return (
         isCurrentUserMessage
             ? (<li className="chat_message chat_sender">
-                {renderMessage}
+                {renderMessage()}
             </li>)
             : (<div className="other__message">
-                {(isLast && userSent) && <div className="chat__head"><Avatar src={userSent.photoURL} /></div>}
-                {(isFirst && userSent) && <span className="chat_name">{userSent.name}</span>}
+                {(isLast) && <div className="chat__head"><Avatar src={author.photo} /></div>}
+                {(isFirst) && <span className="chat_name">{author.name}</span>}
                 <li className="chat_message">
-                    {renderMessage}
+                    {renderMessage()}
                 </li>
             </div>)
     );

@@ -1,158 +1,132 @@
 import db, { storage } from '../context/firebase';
 import firebase from 'firebase';
+import { useContext } from 'react';
+import { UserContext } from './StateProvider';
 
+// const [{ currentRoom }, dispatch] = useContext(UserContext);
+
+/* USER HANDLING */
 // Get user
 export const getUser = async (uid) => {
-    return db.collection('users').doc(uid).get()
-        .then(doc => doc.data())
-        .catch(error => console.log(error))
+    let res = await db.collection('users').doc(uid).get();
+    return res.data()
 }
 
-// Get messages from room
-export const getRoomMessages = (room, fn) => {
+/* ROOM INFO HANDLING */
+// Get a room by ID
+export const getR = (room, setState) => {
     db.collection('rooms')
-        .doc(room).collection('messages')
-        .orderBy('timestamp', 'asc')
-        .onSnapshot(snapshot =>
-            fn(snapshot.docs.map(doc => doc.data()))
-        )
+    .doc(room)
+    .onSnapshot(snapshot => setState({
+        id: snapshot.id,
+        data: snapshot.data()
+    }));
 }
 
-export const getLatestMessage = (room, fn) => {
-    db.collection('rooms')
-        .doc(room).collection('messages')
-        .orderBy('timestamp', 'asc')
-        .onSnapshot(snapshot => {
-            let m = snapshot.docs.map(doc => doc.data());
-            fn(m[m.length - 1])
-        })
-}
-
-// Post messages
-export const postMessages = (message, type, room, user) => {
-    if (message) {
-        db.collection('rooms').doc(room)
-            .collection('messages').add({
-                message: message,
-                type: type,
-                name: user.uid,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-    }
-}
-
-// Get users' rooms
-export const getUserRoomIds = (uid, fn) => {
-    db.collection('users').doc(uid)
-    .onSnapshot(snapshot => fn(snapshot.data().rooms));
-}
-
-export const getUserRooms = (roomIds, fn) => {
-    let temp = [];
-    roomIds.forEach(r => {
-        temp.push(new Promise(resolve => {
-            getRoomById(r, resolve)
-        }, reject => {
-            reject("Error retrieved")
-        }))
-    })
-
-    Promise.all(temp)
-        .then(res => fn(res))
-        .catch(err => console.log(err))
-}
-
-// Get a room info
-export const getRoomById = (room, fn) => {
+export const getRoomInfo = (room, setState) => {
     db.collection('rooms')
         .doc(room)
-        .onSnapshot(snapshot => fn({
+        .onSnapshot(snapshot => setState({
             id: snapshot.id,
             data: snapshot.data()
         }));
 }
 
-// Get a room's members
-export const getRoomMembers = (room, fn) => {
-    db.collection('rooms').doc(room).collection('members')
-        .onSnapshot(snapshot => fn(
-            snapshot.docs.map(doc => ({
-                id: doc.id,
-                data: doc.data()
-            })))
-        )
+// Get user's rooms
+export const getUserRooms = (uid, setState) => {
+    db.collection('users').doc(uid)
+        .onSnapshot(snapshot => {
+            let roomIds = snapshot.data().rooms;
+            let rooms = [];
+            roomIds.forEach(r => {
+                rooms.push(new Promise(resolve => {
+                    getRoomInfo(r, resolve)
+                }, reject => {
+                    reject("Error retrieved")
+                }))
+            })
+
+            Promise.all(rooms)
+                .then(res => setState(res))
+                .catch(err => console.log(err))
+        });
 }
 
-// Join a room
+/* ROOM ACTION HANDLING */
+// Join room
 export const joinRoom = async (roomId, user) => {
-    return db.collection('rooms').doc(roomId).collection('members').add({
+    await db.collection('rooms').doc(roomId).collection('members').add({
         name: user.displayName,
         uid: user.uid,
         photoURL: user.photoURL
     })
-    .then(() => {
-        return db.collection('users').doc(user.uid).update({
-            rooms: firebase.firestore.FieldValue.arrayUnion(roomId)
-        })
+    
+    await db.collection('users').doc(user.uid).update({
+        rooms: firebase.firestore.FieldValue.arrayUnion(roomId)
     })
-    .catch(error => console.log(error))
+}
+
+// Join validator
+export const isRoomIdValid = async (roomId) => {
+    let res = await db.collection('rooms').doc(roomId).get()
+    return res.exists ? true : false
+}
+
+export const isUserInRoom = async (roomId, user) => {
+    let userInRoom = false;
+    let res = await db.collection('users').where('rooms', 'array-contains', roomId).get();
+    res.forEach(doc => {
+        if (doc.id === user.uid) {
+            userInRoom = true
+        }    
+    })
+    return userInRoom
 }
 
 export const isAbleToJoin = async (roomId, user) => {
-    let res = true;
+    let roomIdValid = await isRoomIdValid(roomId);
+    let userInRoom = await isUserInRoom(roomId, user);
 
-    return db.collection('rooms').doc(roomId).get().then(doc => {
-        // check if room id is valid
-        if (!doc.exists) {
-            res = "not exist"
+    if (roomIdValid) {
+        if (!userInRoom) {
+            return true
+        } else {
+            return "You're already in this room"
         }
-        return db.collection('users').where('rooms', 'array-contains', roomId).get()
-    })
-    .then(docs => {
-        // check if user is already in room
-        docs.forEach(doc => {
-            if (doc.id === user.uid) {
-                res = "already"
-            }
-        })
-        return res
-    })
+    } else {
+        return "Room does not exist"
+    }
 }
 
-// Create room
+// Create Room
 export const createRoom = async (roomName, user) => {
-    return db.collection('rooms').add({
+    let room = await db.collection('rooms').add({
         name: roomName,
+        photo: null,
         admin: {
             name: user.displayName,
             uid: user.uid
         }
     })
-    .then(async (room) => {
-        await joinRoom(room.id, user)
-        return room.id
-    })
-    .catch(error => console.log('no'));
+
+    await joinRoom(room.id, user)
+    return room.id
 }
 
-// Leave room
+// Leave Room
 export const leaveRoom = async (roomId, user) => {
-    return db.collection('rooms').doc(roomId)
-    .collection('members').where('uid', '==', user.uid).get()
-    .then(docs => {
-        docs.forEach(doc => doc.ref.delete())
-        return db.collection('users').doc(user.uid).update({
-            rooms: firebase.firestore.FieldValue.arrayRemove(roomId)
-        })
+    let res = await db.collection('rooms').doc(roomId).collection('members').where('uid', '==', user.uid).get();
+    res.forEach(doc => doc.ref.delete())
+
+    await db.collection('users').doc(user.uid).update({
+        rooms: firebase.firestore.FieldValue.arrayRemove(roomId)
     })
-    .then(() => true)
-    .catch(error => console.log('no'));
 }
 
-// Upload photo
+/* PHOTO HANDLING */
+// Upload photo to Cloud
 export const uploadPhotoToDb = async (roomId, photoFile) => {
-    const storageRef = storage.ref();
-    const fileRef = storageRef.child(`${roomId}/${photoFile.name}`);
+    const fileRef = storage.ref().child(`${roomId}/${photoFile.name}`);
     await fileRef.put(photoFile)
 
     let photoUrl = await fileRef.getDownloadURL();
@@ -160,6 +134,7 @@ export const uploadPhotoToDb = async (roomId, photoFile) => {
     return photoUrl
 }
 
+// Update room photo
 export const updateRoomPhoto = async (roomId, photoFile) => {
     let photoUrl = await uploadPhotoToDb(roomId, photoFile);
 
@@ -168,9 +143,10 @@ export const updateRoomPhoto = async (roomId, photoFile) => {
     })
 }
 
+// Download room media
 export const downloadPhotos = async (roomId) => {
     let listRef = storage.ref().child(`${roomId}`);
-    let res = await listRef.list({ maxResults: 10 });
+    let res = await listRef.list({ maxResults: 9 });
 
     let photos = [];
     res.items.forEach(item => {
@@ -183,4 +159,52 @@ export const downloadPhotos = async (roomId) => {
     })
 
     return Promise.all(photos)
+}
+
+// MEMBER HANDLING
+// Get members of a room
+export const getRoomMembers = (room, setState) => {
+    db.collection('rooms').doc(room).collection('members')
+        .onSnapshot(snapshot => setState(
+            snapshot.docs.map(doc => ({
+                id: doc.id,
+                data: doc.data()
+            })))
+        )
+}
+
+// MESSAGE HANDLING
+// Get messages of a room
+export const getRoomMessages = (room, setState) => {
+    db.collection('rooms')
+        .doc(room).collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(snapshot => 
+            setState(snapshot.docs.map(doc => doc.data()))
+        )
+}
+
+export const getLatestMessage = (room, setState) => {
+    db.collection('rooms')
+        .doc(room).collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(snapshot => {
+            let m = snapshot.docs.map(doc => doc.data());
+            setState(m[m.length - 1])
+        })
+}
+
+// Post messages
+export const postMessages = (message, type, room, user) => {
+    db.collection('rooms').doc(room)
+        .collection('messages').add({
+            content: message,
+            type: type,
+            author: {
+                id: user.uid,
+                name: user.displayName,
+                photo: user.photoURL
+            },
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
 }

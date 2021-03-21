@@ -1,8 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../context/StateProvider';
 import { Redirect } from 'react-router-dom';
-import db from '../context/firebase';
-import firebase from 'firebase';
 import { createRoom } from '../context/apicalls';
 
 const Start = () => {

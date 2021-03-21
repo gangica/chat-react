@@ -1,37 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import db from '../context/firebase';
 
 import '../css/SidebarUser.css';
 import { Avatar } from '@material-ui/core';
 import { getLatestMessage } from '../context/apicalls';
 
-const SidebarUser = ({ id, name, photo }) => {
+const SidebarUser = ({ id, data, setCurrentRoom }) => {
   const [message, setMessage] = useState([]);
-  const [action, setAction] = useState();
+
+  const renderMessage = () => {
+    if (!message) {
+      return `Welcome to ${data.name}`
+    }
+
+    switch (message.type) {
+      case 'image':
+        return `${message.author.name} sent a photo`
+      
+      default:
+        return message.content
+    }
+  }
 
   useEffect(() => {
     getLatestMessage(id, setMessage);
   }, [])
 
-  useEffect(() => {
-    if (message) {
-      if (message.type === "image") {
-        setAction(`${message.name} sent a photo`)
-      }
-    } else {
-      setAction(`Welcome to ${name}`)
-    }
-  }, [message])
-
   return (
-    <Link to={{ pathname: '/room', state: { id: id }}}>
+    <Link to={{ pathname: '/room', state: { id: id }}} onClick={() => setCurrentRoom(data)}>
       <div className="sidebarUser">
-        <Avatar src={photo && photo} />
+        <Avatar src={data.photo && data.photo} />
         <div className="sidebarUser_name">
-          <h2>{name}</h2>
+          <h2>{data.name}</h2>
           <div className="last__message">
-            <p>{action ? action : (message && message.message)}</p>
+            <p>{renderMessage()}</p>
             <p>{message && new Date(message.timestamp?.toDate())
             .toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false})}</p>
           </div>

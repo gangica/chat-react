@@ -89,6 +89,8 @@ a {
   white-space: nowrap;
   font-family: inherit;
   background: transparent;
+  width: 100%;
+  outline: none
 }
 
 .btn:hover {

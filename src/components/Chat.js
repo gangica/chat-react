@@ -1,34 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { getRoomMessages, getRoomById } from '../context/apicalls';
+import React, { useState, useEffect, useContext } from 'react';
+import { getRoomMessages, getRoomInfo, getR } from '../context/apicalls';
 import '../css/Chat.css';
 import Input from './Input';
 import Messages from './Messages';
 import ChatHeader from './ChatHeader';
 import Setting from './Setting';
+import { UserContext } from '../context/StateProvider';
 
 const Chat = ({ location }) => {
     const { id: roomId } = location.state;
+    const [{ currentRoom }, dispatch] = useContext(UserContext);
     const [room, setRoom] = useState();
     const [messages, setMessages] = useState([]);
     const [setting, setSetting] = useState(true);
 
+    const fetchRoom = (room) => {
+        dispatch({
+            type: 'SET_ROOM',
+            payload: {
+                id: room.id,
+                name: room.data.name,
+                photo: room.data.photo
+            }
+        })
+    }
+
     useEffect(() => {
         // Get room details
-        getRoomById(roomId, setRoom);
+        // getRoomInfo(roomId, setRoom);
+        getR(roomId, fetchRoom);
         getRoomMessages(roomId, setMessages);
     }, [roomId])
 
     return (
         <div className="chat__container">
-            <div className="chat">
-                {room && <ChatHeader name={room.data.name} roomPhoto={room.data.photo} setting={setting} setSetting={setSetting} />}
-                <div className="chat_body">
-                    {room && <Messages messages={messages} />}
+                <div className="chat">
+                    {currentRoom && <ChatHeader setting={setting} setSetting={setSetting} />}
+                    <Messages messages={messages} />
+                    <Input room={roomId} />
                 </div>
-                <Input room={roomId} />
-            </div>
-            {(setting && room) && <Setting roomId={roomId} roomName={room.data.name} roomPhoto={room.data.photo} />}
+            {(setting && currentRoom) && <Setting />}
         </div>
     )
 }

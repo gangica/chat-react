@@ -4,7 +4,7 @@
     width: 35%;
     font-family: inherit; 
     margin: 0 10px;
-    padding: 20px 10px;
+    padding: 10px;
     background: white;
 }
 
@@ -97,12 +97,13 @@ input:focus, textarea:focus {
 .setting__header {
     display: flex;
     border-bottom: 1px solid #ededed;
-    padding: 4px 0 20px 0;
+    padding: 4px 0 6px 0;
     align-items: center;
 }
 
 .setting__header h4 {
     margin-left: 10px;
+    width: 100%
 }
 
 .setting {

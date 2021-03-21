@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import '../css/Chat.css';
 import { Avatar, IconButton } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { UserContext } from '../context/StateProvider';
 
-const ChatHeader = ({ name, roomPhoto, setting, setSetting }) => {
+const ChatHeader = ({ setting, setSetting }) => {
+    const [{ currentRoom }] = useContext(UserContext);
+    const { name, photo } = currentRoom
+
     return (
         <div className="chat_header">
-            <Avatar src={roomPhoto && roomPhoto} />
+            <Avatar src={photo && photo} />
             <div className="chat_headerInfo">
                 <h4>{name}</h4>
             </div>

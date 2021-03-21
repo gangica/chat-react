@@ -8,28 +8,34 @@ import { Avatar, IconButton } from '@material-ui/core';
 import { SearchOutlined } from '@material-ui/icons';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-import { getUserRoomIds, getUserRooms, getA } from '../context/apicalls';
+import { getUserRooms } from '../context/apicalls';
 import { UserContext } from '../context/StateProvider';
 import InfoIcon from '@material-ui/icons/Info';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-const Sidebar = ({ name }) => {
-  const [{ user }] = useContext(UserContext);
-  const [roomIds, setRoomIds] = useState([]);
+const Sidebar = () => {
+  const [{ user, currentRoom }, dispatch] = useContext(UserContext);
   const [rooms, setRooms] = useState([]);
 
-  useEffect(() => {
-    // getUserRoomIds(user.uid, setRoomIds)
-  }, [])
+  const setCurrentRoom = (data) => {
+    dispatch({
+      type: 'SET_ROOM',
+      payload: data
+    })
+  }
 
   useEffect(() => {
-    getUserRooms(roomIds, setRooms)
-  }, [roomIds])
+    getUserRooms(user.uid, setRooms)
+  }, [])
 
   return (
     <div className="sidebar">
       <div className="setting__header">
         <InfoIcon />
         <h4>Chatime</h4>
+        <IconButton>
+          <ExitToAppIcon />
+        </IconButton>
       </div>
       <div className="profile__pic">
         <Avatar src={user.photoURL} alt="avatar" />
@@ -61,7 +67,7 @@ const Sidebar = ({ name }) => {
 
       <div className="sidebar_users">
         {rooms.map((room, i) => (
-          <SidebarUser key={i} id={room.id} name={room.data.name} photo={room.data.photo} />
+          <SidebarUser key={i} id={room.id} data={room.data} setCurrentRoom={setCurrentRoom} />
         ))}
       </div>
     </div>
