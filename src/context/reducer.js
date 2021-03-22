@@ -1,9 +1,6 @@
 export const initialState = {
     user: null,
-    currentRoom: {
-        general: null,
-        media: null
-    },
+    currentRoomId: null,
 }
 
 const reducer = (state, action) => {
@@ -17,7 +14,7 @@ const reducer = (state, action) => {
         case 'SET_ROOM':
             return {
                 ...state,
-                currentRoom: action.payload
+                currentRoomId: action.payload
             };
         
         default:

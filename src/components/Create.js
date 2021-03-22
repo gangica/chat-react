@@ -3,7 +3,7 @@ import { UserContext } from '../context/StateProvider';
 import { Redirect } from 'react-router-dom';
 import { createRoom } from '../context/apicalls';
 
-const Start = () => {
+const Create = () => {
     const [{ user }] = useContext(UserContext);
     const [roomName, setRoomName] = useState('');
     const [roomId, setRoomId] = useState('');
@@ -41,4 +41,4 @@ const Start = () => {
     ) : (<Redirect to={{ pathname: '/room', state: { id: roomId }}} />))
 }
 
-export default Start;
+export default Create;

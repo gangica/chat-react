@@ -109,3 +109,7 @@ input:focus, textarea:focus {
 .setting {
     width: 50%
 }
+
+.active {
+    background: #ecf0f4
+}

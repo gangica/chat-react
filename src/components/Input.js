@@ -5,27 +5,29 @@ import { postMessages, uploadPhotoToDb } from '../context/apicalls';
 import { IconButton } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import ImageIcon from '@material-ui/icons/Image';
 import '../css/Chat.css';
 
-const Input = ({ room }) => {
-    const [{ user }] = useContext(UserContext);
+const Input = () => {
+    const [{ user, currentRoomId: roomId }] = useContext(UserContext);
     const [message, setMessage] = useState();
     const [photo, setPhoto] = useState(null);
 
     const onFileChange = (e) => {
-        let reader = new FileReader();
-        let img = e.target.files[0]
-
-        reader.onloadend = () => {
-            setPhoto({
-                file: img,
-                previewUrl: reader.result
-            })
-        }
-
-        reader.readAsDataURL(img);
+        if (e.target.files[0]) {
+            let reader = new FileReader();
+            let img = e.target.files[0]
+    
+            reader.onloadend = () => {
+                setPhoto({
+                    file: img,
+                    previewUrl: reader.result
+                })
+            }
+    
+            reader.readAsDataURL(img);
+        }        
     }
 
     const sendMessage = async (e) => {
@@ -33,14 +35,14 @@ const Input = ({ room }) => {
 
         // Photo message
         if (photo) {
-            let photoUrl = await uploadPhotoToDb(room, photo.file);
-            postMessages(photoUrl, "image", room, user);
+            let photoUrl = await uploadPhotoToDb(roomId, photo.file);
+            postMessages(photoUrl, "image", roomId, user);
             setPhoto(null);
         }    
 
         // Text message
         if (message) {
-            postMessages(message, "text", room, user);
+            postMessages(message, "text", roomId, user);
             setMessage('');
         }
     }
@@ -72,7 +74,7 @@ const Input = ({ room }) => {
                 <div className="input__container preview">
                     <div className="preview__container">
                         <img src={photo.previewUrl} alt="preview" className="preview__img" />
-                        <span className="delete" onClick={() => setPhoto(null)}><AddCircleIcon /></span>
+                        <span className="delete" onClick={() => setPhoto(null)}><HighlightOffIcon /></span>
                     </div>
                 </div>
             )}

@@ -8,6 +8,7 @@ import "./App.css";
 const App = () => {
   const [{ user }, dispatch] = useContext(UserContext);
   const [isLoggedIn, setIsLoggedIn] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
       auth.onAuthStateChanged(currentUser => {
@@ -20,14 +21,14 @@ const App = () => {
         } else {
           setIsLoggedIn(false)
         }
+        setIsLoading(false)
       })
   }, [])
 
   return (
     <div className="app">
-      <div className="app_body">
-          {isLoggedIn ? <Main /> : <Login />}
-      </div>
+      {isLoading && <div className="loading">Loading</div>}
+      {isLoggedIn ? <Main /> : <Login />}
     </div>
   )
 };

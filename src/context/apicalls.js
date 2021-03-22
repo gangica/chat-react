@@ -1,9 +1,5 @@
 import db, { storage } from '../context/firebase';
 import firebase from 'firebase';
-import { useContext } from 'react';
-import { UserContext } from './StateProvider';
-
-// const [{ currentRoom }, dispatch] = useContext(UserContext);
 
 /* USER HANDLING */
 // Get user
@@ -14,15 +10,6 @@ export const getUser = async (uid) => {
 
 /* ROOM INFO HANDLING */
 // Get a room by ID
-export const getR = (room, setState) => {
-    db.collection('rooms')
-    .doc(room)
-    .onSnapshot(snapshot => setState({
-        id: snapshot.id,
-        data: snapshot.data()
-    }));
-}
-
 export const getRoomInfo = (room, setState) => {
     db.collection('rooms')
         .doc(room)

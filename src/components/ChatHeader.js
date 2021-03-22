@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import '../css/Chat.css';
 import { Avatar, IconButton } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { UserContext } from '../context/StateProvider';
 
-const ChatHeader = ({ setting, setSetting }) => {
-    const [{ currentRoom }] = useContext(UserContext);
-    const { name, photo } = currentRoom
+const ChatHeader = ({ room, chatInfo, setChatInfo }) => {
+    const { name, photo } = room.data;
 
     return (
         <div className="chat_header">
@@ -14,7 +12,7 @@ const ChatHeader = ({ setting, setSetting }) => {
             <div className="chat_headerInfo">
                 <h4>{name}</h4>
             </div>
-            <IconButton onClick={() => setSetting(!setting)}>
+            <IconButton onClick={() => setChatInfo(!chatInfo)}>
                 <MoreVertIcon />
             </IconButton>
         </div>

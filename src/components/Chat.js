@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getRoomMessages, getRoomInfo, getR } from '../context/apicalls';
+import { getRoomMessages, getRoomInfo } from '../context/apicalls';
 import '../css/Chat.css';
 import Input from './Input';
 import Messages from './Messages';
 import ChatHeader from './ChatHeader';
-import Setting from './Setting';
+import ChatInfo from './ChatInfo';
 import { UserContext } from '../context/StateProvider';
 
 const Chat = ({ location }) => {
@@ -12,34 +12,31 @@ const Chat = ({ location }) => {
     const [{ currentRoom }, dispatch] = useContext(UserContext);
     const [room, setRoom] = useState();
     const [messages, setMessages] = useState([]);
-    const [setting, setSetting] = useState(true);
-
-    const fetchRoom = (room) => {
-        dispatch({
-            type: 'SET_ROOM',
-            payload: {
-                id: room.id,
-                name: room.data.name,
-                photo: room.data.photo
-            }
-        })
-    }
+    const [chatInfo, setChatInfo] = useState(true);
 
     useEffect(() => {
         // Get room details
-        // getRoomInfo(roomId, setRoom);
-        getR(roomId, fetchRoom);
+        dispatch({
+            type: 'SET_ROOM',
+            payload: roomId
+        })
+
+        getRoomInfo(roomId, setRoom);
         getRoomMessages(roomId, setMessages);
     }, [roomId])
 
     return (
         <div className="chat__container">
-                <div className="chat">
-                    {currentRoom && <ChatHeader setting={setting} setSetting={setSetting} />}
-                    <Messages messages={messages} />
-                    <Input room={roomId} />
-                </div>
-            {(setting && currentRoom) && <Setting />}
+            {room && (
+                <>
+                    <div className="chat">
+                        <ChatHeader room={room} chatInfo={chatInfo} setChatInfo={setChatInfo} />
+                        <Messages messages={messages} />
+                        <Input />
+                    </div>
+                    {chatInfo && <ChatInfo room={room} />}
+                </>
+            )}
         </div>
     )
 }

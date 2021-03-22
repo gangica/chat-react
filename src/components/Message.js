@@ -1,10 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { UserContext } from '../context/StateProvider';
 
 import '../css/Chat.css';
 import { Avatar } from '@material-ui/core';
 import ReactEmoji from 'react-emoji';
-import { getUser } from '../context/apicalls';
 
 const Message = ({ message, isFirst, isLast }) => {
     const { content, type, author, timestamp } = message;

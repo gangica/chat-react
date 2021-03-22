@@ -249,7 +249,7 @@ ul {
     bottom: 0rem;
 }
 
-#upload, #uploadMessage {
+#upload, #uploadMessage, .invisible {
     opacity: 0;
     position: absolute;
     z-index: -1; 

@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import '../css/SidebarUser.css';
 import { Avatar } from '@material-ui/core';
 import { getLatestMessage } from '../context/apicalls';
 
-const SidebarUser = ({ id, data, setCurrentRoom }) => {
+const NavConversations = ({ active, room }) => {
   const [message, setMessage] = useState([]);
 
   const renderMessage = () => {
     if (!message) {
-      return `Welcome to ${data.name}`
+      return `Welcome to ${room.data.name}`
     }
 
     switch (message.type) {
@@ -23,15 +23,15 @@ const SidebarUser = ({ id, data, setCurrentRoom }) => {
   }
 
   useEffect(() => {
-    getLatestMessage(id, setMessage);
+    getLatestMessage(room.id, setMessage);
   }, [])
 
   return (
-    <Link to={{ pathname: '/room', state: { id: id }}} onClick={() => setCurrentRoom(data)}>
-      <div className="sidebarUser">
-        <Avatar src={data.photo && data.photo} />
+    <Link to={{ pathname: '/room', state: { id: room.id }}}>
+      <div className={active ? "sidebarUser active" : "sidebarUser"}>
+        <Avatar src={room.data.photo && room.data.photo} />
         <div className="sidebarUser_name">
-          <h2>{data.name}</h2>
+          <h2>{room.data.name}</h2>
           <div className="last__message">
             <p>{renderMessage()}</p>
             <p>{message && new Date(message.timestamp?.toDate())
@@ -44,4 +44,4 @@ const SidebarUser = ({ id, data, setCurrentRoom }) => {
   )
 };
 
-export default SidebarUser;
+export default NavConversations;

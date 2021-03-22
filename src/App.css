@@ -93,7 +93,7 @@ a {
   outline: none
 }
 
-.btn:hover {
+.btn:hover, .btn__active {
   color: white;
   background: #018342;
   border: 2px solid #018342;
@@ -145,6 +145,15 @@ a {
   height: 30px;
 }
 
+.loading {
+    background: #ecf0f4;
+    text-align: center;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 @keyframes App-logo-spin {
   from {
