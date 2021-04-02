@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRoomMessages, getRoomInfo } from '../context/apicalls';
+import { UserContext } from '../context/StateProvider';
 import '../css/Chat.css';
 import Input from './Input';
 import Messages from './Messages';
 import ChatHeader from './ChatHeader';
 import ChatInfo from './ChatInfo';
-import { UserContext } from '../context/StateProvider';
 
 const Chat = ({ location }) => {
     const { id: roomId } = location.state;

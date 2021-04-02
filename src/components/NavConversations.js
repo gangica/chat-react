@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-
+import { getLatestMessage } from '../context/apicalls';
 import '../css/SidebarUser.css';
 import { Avatar } from '@material-ui/core';
-import { getLatestMessage } from '../context/apicalls';
 
 const NavConversations = ({ active, room }) => {
   const [message, setMessage] = useState([]);

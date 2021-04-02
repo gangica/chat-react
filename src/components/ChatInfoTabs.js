@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { downloadPhotos, getRoomMembers } from '../context/apicalls';
-
-import '../css/SidebarUser.css';
-import { Avatar } from '@material-ui/core';
 import { UserContext } from '../context/StateProvider';
+import '../css/SidebarUser.css';
+
+import { Avatar } from '@material-ui/core';
 
 const ChatInfoTabs = () => {
     const [{ currentRoomId: roomId }] = useContext(UserContext);

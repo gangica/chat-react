@@ -1,10 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { leaveRoom } from '../context/apicalls';
 import { Redirect } from 'react-router-dom';
+
+import { leaveRoom } from '../context/apicalls';
+import { UserContext } from '../context/StateProvider';
 import '../css/Chat.css';
+
 import { IconButton } from '@material-ui/core';
 import InfoIcon from '@material-ui/icons/Info';
-import { UserContext } from '../context/StateProvider';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const ChatInfoHeader = () => {

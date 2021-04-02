@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { UserContext } from '../context/StateProvider';
-import db, { auth, provider } from '../context/firebase';
 import firebase from 'firebase';
 
+import { UserContext } from '../context/StateProvider';
+import db, { auth, provider } from '../context/firebase';
 import '../css/Chat.css';
 
 const Login = () => {
@@ -14,7 +14,7 @@ const Login = () => {
 
         if (currentUser.exists) {
             db.collection('users').doc(result.user.uid)
-            .update({ lastLoginTime: firebase.firestore.FieldValue.serverTimestamp() });
+                .update({ lastLoginTime: firebase.firestore.FieldValue.serverTimestamp() });
         } else {
             db.collection('users').doc(result.user.uid).set({
                 name: result.user.displayName,
@@ -31,12 +31,18 @@ const Login = () => {
     };
 
     return (
-        <div className="room wrapper">
-            <h2>Chatime</h2>
-            <p>Create private room to chat with friends</p>
-            <button
-                className="medium__btn"
-                type="submit" onClick={authenticate}>Sign In with Google</button>
+        <div className="third__container">
+            <img src="https://www.flaticon.com/svg/vstatic/svg/1041/1041916.svg?token=exp=1616408251~hmac=187aa66236b024dc0a3b31be23ea598f" />
+            <div className="login__title">
+                <h1>Chatime</h1>
+                <p>Create private room to chat with friends</p>
+            </div>
+            <div>
+                <button
+                    className="medium__btn"
+                    type="submit" onClick={authenticate}>Sign In with Google</button>
+
+            </div>
         </div>
     )
 }

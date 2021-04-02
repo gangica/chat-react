@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
+import NavHeader from './NavHeader';
 import NavConversations from './NavConversations';
 import '../css/Sidebar.css';
 
@@ -10,7 +11,6 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import { getUserRooms } from '../context/apicalls';
 import { UserContext } from '../context/StateProvider';
-import NavHeader from './NavHeader';
 
 const Nav = () => {
   const [{ user, currentRoomId }] = useContext(UserContext);

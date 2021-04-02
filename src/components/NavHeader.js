@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import '../css/Sidebar.css';
+import { UserContext } from '../context/StateProvider';
+import { auth } from '../context/firebase';
 
 import { Avatar, IconButton } from '@material-ui/core';
-import { UserContext } from '../context/StateProvider';
-import InfoIcon from '@material-ui/icons/Info';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { auth } from '../context/firebase';
 
 const NavHeader = () => {
     const [{ user }] = useContext(UserContext);
@@ -17,7 +16,7 @@ const NavHeader = () => {
     return (
         <>
             <div className="setting__header">
-                <InfoIcon />
+                <Avatar src="https://www.flaticon.com/svg/vstatic/svg/1041/1041916.svg?token=exp=1616408251~hmac=187aa66236b024dc0a3b31be23ea598f" />
                 <h4>Chatime</h4>
                 <IconButton onClick={logout}>
                     <ExitToAppIcon />

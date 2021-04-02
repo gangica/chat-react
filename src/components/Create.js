@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { UserContext } from '../context/StateProvider';
 import { Redirect } from 'react-router-dom';
 import { createRoom } from '../context/apicalls';
+import { UserContext } from '../context/StateProvider';
 
 const Create = () => {
     const [{ user }] = useContext(UserContext);
@@ -19,7 +19,7 @@ const Create = () => {
     }
 
     return (!redirect ? (
-        <div className="chat_body join">
+        <div className="main join">
             <div className="room wrapper">
                 <h2>Create New Room</h2>
                 <div className="sidebar_search">

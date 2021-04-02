@@ -1,0 +1,7 @@
+.join {    
+    display: grid;
+    place-items: center;
+    background: #ecf0f4;
+    border-radius: 10px;
+    margin: 10px;
+}

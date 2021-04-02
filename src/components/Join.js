@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { UserContext } from '../context/StateProvider';
 import { Redirect } from 'react-router-dom';
 import { isAbleToJoin, joinRoom } from '../context/apicalls';
+import { UserContext } from '../context/StateProvider';
+import '../css/Join.css';
 
 const Join = () => {
     const [{ user }] = useContext(UserContext);
@@ -24,7 +25,7 @@ const Join = () => {
     }
 
     return (!redirect ? (
-        <div className="chat_body join">
+        <div className="main join">
             <div className="room wrapper">
                 <h2>Join Room</h2>
                 <div className="sidebar_search">

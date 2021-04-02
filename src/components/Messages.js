@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import ScrollToBottom from 'react-scroll-to-bottom';
 
 import { firstOrLastMap, isFirstOrLast } from '../context/utils';
 import Message from './Message';
@@ -14,7 +13,7 @@ const Messages = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="chat_body">
+    <div className="main">
       <ul className="messages">
         {messages.map((message, i) => {
           let firstMap = firstOrLastMap(messages).firstIndices;

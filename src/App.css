@@ -64,15 +64,52 @@ input::placeholder {
   color: #adacac;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.app {
+  display: grid;
+  background-color: #ecf0f4;
+  place-items: center;
+  height: 100vh;
+}
+
+.app_body {
+  display: flex;
+  background-color: white;
+  height: 90vh;
+  min-width: 75vw;
+  box-shadow: -1px 4px 50px -40px;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 a {
   text-decoration: none !important;
+  color: black;
   margin: 0
+}
+
+p, .description {
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin: 5px 0 0 0;
+  color: #adacac;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
 }
 
 .btn {
@@ -153,6 +190,32 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.third__container {
+  background: #fff;
+  padding: 40px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  border-radius: 20px;
+  margin: 0 auto;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align:center
+}
+
+.third__container h1 {
+  margin: 5px
+}
+
+.login__title {
+  margin: 20px
+}
+
+.third__container img {
+  height: 80px;
+  width: 80px;
 }
 
 @keyframes App-logo-spin {
