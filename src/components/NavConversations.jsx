@@ -9,7 +9,7 @@ const NavConversations = ({ active, room }) => {
 
   const renderMessage = () => {
     if (!message) {
-      return `Welcome to ${room.data.name}`
+      return `Welcome to ${room?.data?.name}`
     }
 
     switch (message.type) {
@@ -28,9 +28,9 @@ const NavConversations = ({ active, room }) => {
   return (
     <Link to={{ pathname: '/room', state: { id: room.id }}}>
       <div className={active ? "sidebarUser active" : "sidebarUser"}>
-        <Avatar src={room.data.photo && room.data.photo} />
+        <Avatar src={room?.data?.photo && room.data.photo} />
         <div className="sidebarUser_name">
-          <h2>{room.data.name}</h2>
+          <h2>{room?.data?.name}</h2>
           <div className="last__message">
             <p>{renderMessage()}</p>
             <p>{message && new Date(message.timestamp?.toDate())
